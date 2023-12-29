@@ -13,19 +13,26 @@ class Formulario extends Component
     //Definicion de propiedades
     public $categories, $tags;
 
-    #[Rule('required', message:'El campo titulo es requerido')]
-    public $title;
-
-    #[Rule('required')]
-    public $content;
-
-    #[Rule ('required', as:'categoria')]
-    public $category_id = '';
-
-    #[Rule ('required|array')]
-    public $selectedTags = [];
-
     public $posts;
+
+
+    #[Rule([
+        'postCreate.title' => 'required',
+        'postCreate.content' => 'required',
+        'postCreate.category_id'=>'required|exists:categories,id',
+        'postCreate.tags'=>'required|array'
+    ], [], [
+        'postCreate.title'=>'titulo',
+        'postCreate.content' => 'contenido',
+        'postCreate.category_id'=>'categoria',
+        'postCreate.tags'=>'etiqueta'
+    ])]
+    public $postCreate =[
+        'category_id' => '',
+        'title' => '',
+        'content' => '',
+        'tags' => []
+    ];
 
     public $postEditId = '';
 
@@ -65,12 +72,15 @@ class Formulario extends Component
         //     'content' => $this->content
         // ]);
 
-        $post = Post::create(
-            $this->only('category_id', 'title', 'content')
-        );
+        $post = Post::create([
+            'category_id' => $this->postCreate['category_id'],
+            'title' => $this->postCreate['title'],
+            'content' => $this->postCreate['content']
+        ]);
 
-        $post->tags()->attach($this->selectedTags);
-        $this->reset(['category_id', 'title', 'content', 'selectedTags']);
+        $post->tags()->attach($this->postCreate['tags']);
+
+        $this->reset(['postCreate']);
         $this->posts = Post::all();
         // dd(
         //     [
@@ -81,6 +91,7 @@ class Formulario extends Component
         // ]);
     }
     public function edit($postId){
+        $this->resetValidation();
         $this -> open = true;
 
         //Vamos a asignarle a postEditId el valor que contiene postId
@@ -98,6 +109,14 @@ class Formulario extends Component
 
     }
     public function update(){
+
+        $this->validate([
+            'postEdit.title' => 'required',
+            'postEdit.content' => 'required',
+            'postEdit.category_id'=>'required|exists:categories,id',
+            'postEdit.tags'=>'required|array'
+        ]);
+
         $post = Post::find($this->postEditId);
         $post->update([
             'category_id' => $this->postEdit['category_id'],
