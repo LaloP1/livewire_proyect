@@ -46,6 +46,8 @@ class Formulario extends Component
 
         //Crea una validacion para hacer los campos requeridos
         $this->validate();
+
+
         // $this->validate([
         //     'title'=>'required',
         //     'content'=>'required',
