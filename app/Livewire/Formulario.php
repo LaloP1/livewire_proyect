@@ -48,6 +48,8 @@ class Formulario extends Component
         $this->validate();
 
 
+
+
         // $this->validate([
         //     'title'=>'required',
         //     'content'=>'required',
