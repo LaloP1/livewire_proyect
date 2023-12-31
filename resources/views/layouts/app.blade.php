@@ -41,5 +41,8 @@
         @stack('modals')
 
         @livewireScripts
+
+        {{-- Esto se ejecuta despues de que livewire inicia --}}
+        @stack('js')
     </body>
 </html>

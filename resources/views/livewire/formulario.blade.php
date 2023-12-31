@@ -23,7 +23,7 @@
                     Categorias
                 </x-label>
                     <x-select class="w-full"
-                    wire:model="postCreate.category_id">
+                    wire:model.live="postCreate.category_id">
                         <option value="" disabled>Seleccione una categoria</option>
                         @foreach ($categories as $category )
                         <option value="{{ $category->id }}">
@@ -80,7 +80,7 @@
 
     {{-- Formulario de edicion --}}
     <form wire:submit="update">
-        <x-dialog-modal wire:model="open">
+        <x-dialog-modal wire:model="postEdit.open">
             <x-slot name="title">
                 Actualizar el Post
             </x-slot>
@@ -91,7 +91,7 @@
                         </x-label>
                         <x-input class="w-full"
                         {{-- Estoy sincronizando el contenido de postEdit con el formulario input --}}
-                        wire:model="postEdit.title"
+                        wire:model.live="postEdit.title"
                         />
                         <x-input-error for="postEdit.title"></x-input-error>
                     </div>
@@ -141,7 +141,7 @@
                 <div class="flex justify-end">
                     <x-danger-button
                     class=" mr-3"
-                    wire:click="$set('open', false)">
+                    wire:click="$set('postEdit.open', false)">
                         Cancelar
                     </x-danger-button>
                     <x-button>
@@ -151,5 +151,16 @@
             </x-slot>
         </x-dialog-modal>
     </form>
+
+    @push('js')
+        <script>
+            // Le estoy diciendo que se ejecute cuando livewire este actualizado
+            // documment.addEventListener('livewire:initialized', function(){
+                Livewire.on('post-updated', function(comment){
+                    console.log(comment[0]);
+                });
+            // });
+        </script>
+    @endpush
 
 </div>
