@@ -1,5 +1,12 @@
 <div>
     <div class="bg-white shadow rounded-lg p-6 mb-[15px]">
+
+        @if($postCreate->image)
+
+            <img class="mb-4" src="{{ $postCreate->image->temporaryUrl() }}" alt="">
+
+        @endif
+
         <form wire:submit="save">
             <div class="mb-4">
                 <x-label>
@@ -33,6 +40,31 @@
                     </x-select>
                     <x-input-error for="postCreate.category_id"></x-input-error>
             </div>
+
+            <div class="mb-4">
+                <x-label>
+                    Imagen
+                </x-label>
+
+                <div
+                    x-data="{ isUploading: false, progress: 0 }"
+                    x-on:livewire-upload-start="isUploading = true"
+                    x-on:livewire-upload-finish="isUploading = false"
+                    x-on:livewire-upload-error="isUploading = false"
+                    x-on:livewire-upload-progress="progress = $event.detail.progress"
+                >
+                    <input
+                    type="file"
+                    wire:model="postCreate.image"
+                    wire:key="{{ $postCreate->imageKey }}" />
+
+                    <!-- Progress Bar -->
+                    <div x-show="isUploading">
+                        <progress max="100" x-bind:value="progress"></progress>
+                    </div>
+                </div>
+            </div>
+
             <div class="mb-4 ">
                 <x-label>
                     Etiquetas
@@ -56,6 +88,19 @@
                 </x-button>
             </div>
         </form>
+
+        <div class="justify-between" wire:loading.delay>
+            <div>
+                Hola
+            </div>
+            <div>
+                Mundo
+            </div>
+        </div>
+        {{-- <div wire:loading wire:target="save">
+            Procesando ...
+        </div> --}}
+
     </div>
 
     <div class="bg-white shadow rounded-lg p-6 ">
@@ -76,6 +121,9 @@
             </li>
             @endforeach
         </ul>
+        <div class="mt-4">
+            {{ $posts->links('vendor.livewire.simple-tailwind') }}
+        </div>
     </div>
 
     {{-- Formulario de edicion --}}

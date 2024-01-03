@@ -23,6 +23,11 @@ class PostCreateForm extends Form
     #[Rule('required|array')]
     public $tags = [];
 
+    #[Rule('nullable|image|max:1024')]
+    public $image;
+
+    public $imageKey;
+
     public function save(){
         //Crea una validacion para hacer los campos requeridos
         // Accede a la instancia del objeto y ejecuta el método de validación
@@ -31,10 +36,19 @@ class PostCreateForm extends Form
         $post = Post::create(
             $this->only('title','content','category_id')
         );
+
+
         //Asociamos los valores de postCreate con post
         $post->tags()->attach($this->tags);
 
+        if($this->image){
+            $post->image_path = $this->image->store('posts');
+            $post->save();
+        }
+
         //Accedemos al objeto y reseteamos los valores
         $this->reset();
+
+        $this->imageKey = rand();
     }
 }

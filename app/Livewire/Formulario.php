@@ -8,14 +8,20 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use Livewire\Attributes\Rule;
+use Livewire\Attributes\Lazy;
 use Livewire\Component;
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
+#[ Lazy ]
 class Formulario extends Component
 {
+
+    use WithFileUploads;
+    use WithPagination;
+
     //Definicion de propiedades
     public $categories, $tags;
-
-    public $posts;
 
     //postCreate es una variable que actuara como instancia del FormObject
     //En pocas palabras se está declarando una propiedad llamada $postCreate y se está indicando que su tipo es PostCreateForm.
@@ -28,7 +34,6 @@ class Formulario extends Component
     public function mount(){
         $this->categories = Category::all();
         $this->tags = Tag::all();
-        $this->posts = Post::all();
     }
 
     public function updating($property, $value){
@@ -48,7 +53,8 @@ class Formulario extends Component
     }
     public function save(){
         $this->postCreate->save();
-        $this->posts = Post::all();
+
+        $this->resetPage(pageName: 'pagePosts');
 
         //Emitimos un evento
         //Informamos que se esta ejecuntando un evento
@@ -60,7 +66,6 @@ class Formulario extends Component
     }
     public function update(){
         $this->postEdit->update();
-        $this->posts = Post::all();
         $this->dispatch('post-updated', 'Articulo actualizado');
     }
 
@@ -70,13 +75,17 @@ class Formulario extends Component
         //Ejecuta la eliminacion
         $post->delete();
         //Refresca los post
-        $this->posts = Post::all();
         $this->dispatch('post-deleted', 'Articulo eliminado');
 
     }
 
+    public function placeholder(){
+        return view('livewire.placeholders.skeleton');
+    }
     public function render()
     {
-        return view('livewire.formulario');
+        $posts = Post::orderBy('id', 'desc')
+        ->paginate(5, pageName: 'pagePosts');
+        return view('livewire.formulario', compact('posts'));
     }
 }
