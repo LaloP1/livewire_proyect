@@ -11,10 +11,12 @@
             {{-- @livewire('paises') --}}
 
 
-            <livewire:formulario />
+            {{-- <livewire:formulario />
             <div class="mt-8">
                 @livewire('comments')
-            </div>
+            </div> --}}
+
+            <livewire:computed-component />
 
             {{-- @livewire('father') --}}
         </div>
